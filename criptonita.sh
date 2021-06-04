@@ -16,7 +16,7 @@ validarRuta()
 	echo "Listar: list"
 	echo "Regresar: back"
 	echo -e "Dirigirse a (poner go ENTER y luego la ruta): go"
-	echo  "Para ingresar la ruta del archivo a cifrar solo escribala"
+	echo  "Para ingresar la ruta del archivo solo escribala"
 	#Bucle que se rompe cuando se indica una ruta aceptada
 	until [ "$ARCHIVO" == "TRUE" ]
 	do							
@@ -87,12 +87,12 @@ validarRuta()
 					fi
 				elif [ -f "$RUTA" ]
 				then
-					#Existe únicamente el directorio
+					#Existe únicamente el fichero										
 					FILE="TRUE"
-					ARCHIVO="TRUE"
+					ARCHIVO="TRUE"															
 				elif [ -d "$RUTA" ]
 				then
-					#Existe únicamente el fichero
+					#Existe únicamente el direct
 					DIR="TRUE"
 				else
 					echo "La ruta es incorrecta"
@@ -105,66 +105,64 @@ validarRuta()
 #FUNCIÓN DE CIFRADO
 cifrado()
 {	
-				#Se investiga la ruta del archivo
-				validarRuta;
-				
-				#Verificamos que tipo de ruta dio el usuario
-				if [ ARCHIVO = "TRUE" ]
-				then
-					case $METODO in
-						"1")
-							gpg --symmetric --cipher-algo 3DES $RUTA && rm $RUTA
-							mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"2")
-							 gpg --symmetric --cipher-algo AES $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"3")
-							 gpg --symmetric --cipher-algo AES192 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"4")
-							 gpg --symmetric --cipher-algo AES256 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"5")
-							 gpg --symmetric --cipher-algo BLOWFISH $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"6")
-							 gpg --symmetric --cipher-algo CAMELIA128 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"7")
-							 gpg --symmetric --cipher-algo CAMELIA192 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"8")
-							 gpg --symmetric --cipher-algo CAMELIA256 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"9")
-							 gpg --symmetric --cipher-algo CAST5 $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"10")
-							 gpg --symmetric --cipher-algo IDEA $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-						"11")
-							 gpg --symmetric --cipher-algo TWOFISH $RUTA && rm $RUTA
-						    	mv $RUTA.gpg $RUTA.criptonita
-						;;
-
-
-
-
-					esac
-				fi					
-			
-			
+	#Se investiga la ruta del archivo
+	validarRuta
+	
+	
+	#Verificamos que tipo de ruta dio el usuario
+	if [ $FILE = "TRUE" ]
+	then	
+	case $METODO in
+		"1")
+			gpg --symmetric --cipher-algo 3DES $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"2")
+			gpg --symmetric --cipher-algo AES $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"3")
+			gpg --symmetric --cipher-algo AES192 $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"4")
+			gpg --symmetric --cipher-algo AES256 $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"5")
+			gpg --symmetric --cipher-algo BLOWFISH $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"6")
+				gpg --symmetric --cipher-algo CAMELIA128 $RUTA && rm $RUTA
+				mv $RUTA.gpg $RUTA
+		;;
+		"7")
+			gpg --symmetric --cipher-algo CAMELIA192 $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"8")
+			gpg --symmetric --cipher-algo CAMELIA256 $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"9")
+			gpg --symmetric --cipher-algo CAST5 $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"10")
+			gpg --symmetric --cipher-algo IDEA $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		"11")
+			gpg --symmetric --cipher-algo TWOFISH $RUTA && rm $RUTA
+			mv $RUTA.gpg $RUTA
+		;;
+		esac
+	fi		
 }
+
+
+
 
 #Verificamos que exista steghide
 if [ -f "/usr/bin/steghide" ]
@@ -232,13 +230,10 @@ do
 				then
 					clear
 				fi
-
-
-				
 			done
 			;;
 		"2")
-			echo "Seleccionaste descifrar"
+			
 			;;
 		"3")
 			echo "Seleccionaste Esteganografía"
