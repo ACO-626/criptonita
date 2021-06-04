@@ -161,6 +161,15 @@ cifrado()
 	fi		
 }
 
+descencriptar()
+{
+	validarRuta
+
+	mv $RUTA $RUTA.gpg
+	gpg -d -o $RUTA $RUTA.gpg
+	rm $RUTA.gpg
+}
+
 
 
 
@@ -226,6 +235,7 @@ do
 				if [ "$METODO" -ge 1 ] && [ "$METODO" -le 11 ]
 				then
 					cifrado
+					clear
 				elif [ "$METODO" = "12" ]
 				then
 					clear
@@ -233,7 +243,7 @@ do
 			done
 			;;
 		"2")
-			
+			descencriptar
 			;;
 		"3")
 			echo "Seleccionaste Esteganografía"
