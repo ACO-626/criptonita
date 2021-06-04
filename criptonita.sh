@@ -5,11 +5,9 @@
 #This Shell Script uses bash as command interpreter
 #Commit language: Spanish
 
-
-#FUNCIÓN DE CIFRADO
-cifrado()
+#Funcion de validado de ruta
+validarRuta()
 {
-	#Método 3DES
 	#Variable que indica si ya se tiene un objeto a cifrar
 	ARCHIVO="FALSE"
 	#Se imprimen las instrucciones para selección de ruta de archivo a cifrar
@@ -58,7 +56,7 @@ cifrado()
 			"clear")
 				clear
 			;;
-			"exit")
+			"exit")		
 				break
 			;;
 			*)
@@ -79,9 +77,11 @@ cifrado()
 					if [ DESAMB = "1" ]
 					then
 						DIR="TRUE"
+						ARCHIVO="TRUE"
 					elif [ DESAMB = "2" ]
 					then
 						FILE="TRUE"
+						ARCHIVO="TRU"
 					else
 						echo "Respuesta no válida"
 					fi
@@ -89,6 +89,7 @@ cifrado()
 				then
 					#Existe únicamente el directorio
 					FILE="TRUE"
+					ARCHIVO="TRUE"
 				elif [ -d "$RUTA" ]
 				then
 					#Existe únicamente el fichero
@@ -96,20 +97,73 @@ cifrado()
 				else
 					echo "La ruta es incorrecta"
 				fi
-				
-				if [ FILE="TRUE" ]
-				then
-					case $METODO in
-						"1")
-							gpg --symmetric --cipher-algo 3DES $RUTA && echo Cifrado exitosamente;
-							 
-						;;
-
-					esac
-				fi					
 			;;
 		esac
 	done
+}
+
+#FUNCIÓN DE CIFRADO
+cifrado()
+{	
+				#Se investiga la ruta del archivo
+				validarRuta;
+				
+				#Verificamos que tipo de ruta dio el usuario
+				if [ ARCHIVO = "TRUE" ]
+				then
+					case $METODO in
+						"1")
+							gpg --symmetric --cipher-algo 3DES $RUTA && rm $RUTA
+							mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"2")
+							 gpg --symmetric --cipher-algo AES $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"3")
+							 gpg --symmetric --cipher-algo AES192 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"4")
+							 gpg --symmetric --cipher-algo AES256 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"5")
+							 gpg --symmetric --cipher-algo BLOWFISH $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"6")
+							 gpg --symmetric --cipher-algo CAMELIA128 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"7")
+							 gpg --symmetric --cipher-algo CAMELIA192 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"8")
+							 gpg --symmetric --cipher-algo CAMELIA256 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"9")
+							 gpg --symmetric --cipher-algo CAST5 $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"10")
+							 gpg --symmetric --cipher-algo IDEA $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+						"11")
+							 gpg --symmetric --cipher-algo TWOFISH $RUTA && rm $RUTA
+						    	mv $RUTA.gpg $RUTA.criptonita
+						;;
+
+
+
+
+					esac
+				fi					
+			
+			
 }
 
 #Verificamos que exista steghide
@@ -153,7 +207,7 @@ do
 			#METODO es la variable que almacena la respuesta del usuario en el menú de métodos de cifrado
 			METODO="0";
 			#Bucle del menú de métodos, se rompe con selección de respuesta 8
-			until [ "$METODO" == "8" ]
+			until [ "$METODO" == "12" ]
 			do
 				clear								
 				echo -e "Selecciona el método de cifrado:"
@@ -165,25 +219,21 @@ do
 				echo "6) CAMELIA 128"
 				echo "7) CAMELIA 192"
 				echo "8) CAMELIA 256"
-				echo "5) CAST5"
-				echo "6) IDEA"
-				echo "7) TWOFISH" 
-				echo "8) regresar"
+				echo "9) CAST5"
+				echo "10) IDEA"
+				echo "11) TWOFISH" 
+				echo "12) regresar"
 				read METODO
-				#Switch case de menú de método
-				case $METODO in
-					"1")
-						cifrado
-						;;
-					"2")
-						echo AES
-						;;
-					"8")
-						clear
-					 	;;
-					*)											 
-						;;
-				esac
+				
+				if [ "$METODO" -ge 1 ] && [ "$METODO" -le 11 ]
+				then
+					cifrado
+				elif [ "$METODO" = "12" ]
+				then
+					clear
+				fi
+
+
 				
 			done
 			;;
