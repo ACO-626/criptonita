@@ -218,9 +218,9 @@ descifrar()
 		elif [ $RESPUESTA = "N" ] || [ $RESPUESTA = "n" ]
 		then	 
 			mv $RUTA $RUTA.gpg && gpg -d -o $RUTA $RUTA.gpg || mv $RUTA.gpg $RUTA
-			if [ -f "$RUTA.gpg" ]
+			if [ -f "$RUTA.gpg" ] && [ -f "$RUTA" ]
 			then
-				mv $RUTA.gpg $RUTA && rm $RUTA.gpg
+				rm $RUTA.gpg 
 			fi
 		fi	
 	fi
