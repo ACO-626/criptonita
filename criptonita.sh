@@ -119,8 +119,8 @@ cifrado()
 	#Se investiga la ruta del archivo
 	if [ $RECURSIVO = "TRUE" ] #El caso recursivo es exclusivo para el segundo tratamiento de directorio
 	then
-		RECURSIVO = "FALSE"  #El recursivo solo debe aplicar una vez por cada directorio
-		DIR = "FALSE"        #Se indica que ya no hay un directorio al cual cifrar 
+		RECURSIVO="FALSE"  #El recursivo solo debe aplicar una vez por cada directorio
+		DIR="FALSE"        #Se indica que ya no hay un directorio al cual cifrar 
 	else
 		#Se pide una ruta para indicar el archivo y se valida 
 		#(en el caso de recursivo la ruta ya se tiene y no requiere validación extra) 
@@ -134,69 +134,96 @@ cifrado()
 	#De acuerdo al método seleccionamos los comandos acordes
 		case $METODO in
 			"1") #Para cifrar a 3DES
-				gpg --symmetric --cipher-algo 3DES $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo 3DES $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"2") #Para cifrar a AES 128
-				gpg --symmetric --cipher-algo AES $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo AES $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"3") #Para cifrar a AES 192
-				gpg --symmetric --cipher-algo AES192 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo AES192 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"4") #Para cifrar a AES 256
-				gpg --symmetric --cipher-algo AES256 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo AES256 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"5") #Para cifrar a BLOWFISH
-				gpg --symmetric --cipher-algo BLOWFISH $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo BLOWFISH $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"6") #Para cifrar a CAMELIA128
-				gpg --symmetric --cipher-algo CAMELIA128 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo CAMELIA128 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"7") #Para cifrar a CAMELIA192
-				gpg --symmetric --cipher-algo CAMELIA192 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo CAMELIA192 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"8") #Para cifrar a CAMELIA256
-				gpg --symmetric --cipher-algo CAMELIA256 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo CAMELIA256 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"9") #Para cifrar a CAST5
-				gpg --symmetric --cipher-algo CAST5 $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo CAST5 $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"10") #Para cifrar a IDEA
-				gpg --symmetric --cipher-algo IDEA $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo IDEA $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 			"11") #Para cifrar a TWOFISH
-				gpg --symmetric --cipher-algo TWOFISH $RUTA && rm $RUTA
-				mv $RUTA.gpg $RUTA
+				gpg --no-symkey-cache --symmetric --cipher-algo TWOFISH $RUTA && rm $RUTA #Cifra genera un gpg y elimina original
+				mv $RUTA.gpg $RUTA #cambia el nombre con extensión original
 			;;
 		esac #Fin de switch de metodo de cifrado
 	elif [ $DIR = "TRUE" ] && [ $ARCHIVO = "TRUE" ] #Es el caso en el que el archivo es un directorio
 	then
-		#Para trabajarlo como archivo convertimos el directorio a un archivo.tar
-		#Cambianos la extensión .tar 
-		#Se llama de nuevo a la función cifrado para cifrar al Directorio que ahora es un fichero
-		#Se usa en el if para ver si se hace validación de ruta		 
-		#Se aplica recursividad
-		tar -cvf $RUTA.tar /$RUTA && rm -r $RUTA && mv $RUTA.tar $RUTA  && FILE="TRUE" && RECURSIVO="TRUE" && cifrado
+		#En ruta actual guardamos la ruta del usuario al momento de ejecutar el script ya que requerimos mover para 
+		#al momento de usar tar no generar carpetas madre extras
+		RUTAACTUAL="$(pwd)"  #Se guarda la ubicación actual
+		MADREDIR="$(cd $RUTA && cd .. && pwd)"  #Se identifica la carpeta madre del directorio
+		cd $MADREDIR # Nos movemos al contenedor del directorio para comprimir con tar
+		NOMBREDIR="$(basename $RUTA)" #Obtenemos el nombre del directorio a partir de la ruta absoluta
+		#Comprimimos eliminamos original renombramos comprimido y mandamos a cifrado
+		tar -cf $RUTA.tar $NOMBREDIR && rm -r $RUTA && mv $RUTA.tar $RUTA && FILE="TRUE" && RECURSIVO="TRUE" && cifrado
+		cd $RUTAACTUAL #Regresamos al usuario al directorio inicial
 	fi
 
 }
 
-descencriptar()
+descifrar()
 {
-	validarRuta
 
-	mv $RUTA $RUTA.gpg
-	gpg -d -o $RUTA $RUTA.gpg
-	rm $RUTA.gpg
+	validarRuta
+	RESPUESTA=""
+	if [ $FILE = "TRUE" ] && [ $ARCHIVO = "TRUE" ]
+	then
+		until [ "$RESPUESTA" == "s" ] || [ "$RESPUESTA" == "S" ] || [ "$RESPUESTA" == "N" ] || [ "$RESPUESTA" == "n" ]
+		do
+			echo "¿El archivo a descifrar era un directorio S/N?"
+			read RESPUESTA			
+		done
+		if [ $RESPUESTA = "S" ] || [ $RESPUESTA = "s" ]
+		then
+			mv $RUTA $RUTA.gpg && gpg -d -o $RUTA $RUTA.gpg || mv $RUTA.gpg $RUTA 
+			if [ -f "$RUTA" ]
+			then
+				RUTAACTUAL="$(pwd)"
+				MADREDIR="$(cd $RUTA && cd .. && pwd)"
+				rm $RUTA.gpg && mv $RUTA $RUTA.tar && cd $MADREDIR && tar -xvf $RUTA.tar && rm $RUTA.tar 
+				cd $RUTAACTUAL
+			fi
+		elif [ $RESPUESTA = "N" ] || [ $RESPUESTA = "n" ]
+		then	 
+			mv $RUTA $RUTA.gpg && gpg -d -o $RUTA $RUTA.gpg || mv $RUTA.gpg $RUTA
+			if [ -f "$RUTA.gpg" ]
+			then
+				mv $RUTA.gpg $RUTA && rm $RUTA.gpg
+			fi
+		fi	
+	fi
 }
 
 
@@ -273,7 +300,7 @@ do
 			done
 			;;
 		"2")
-			descencriptar
+			descifrar
 			;;
 		"3")
 			echo "Seleccionaste Esteganografía"
