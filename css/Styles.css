@@ -1,0 +1,103 @@
+#Foto{
+	width: 30%px;
+	height: 310px;
+    background-color: none;
+    float: left;
+}
+.FOTO{
+	margin: 50px;
+	width: 190px;
+	height: 250px;
+	float: left;
+}
+
+
+.jumbotron{
+	
+	background-color: none;
+}
+
+#info{
+	text-align: center;
+	background-color:  none;
+	width: auto;
+	height: 300px;
+}
+.titulo{
+	margin: 20px;
+border-bottom: solid;
+border-color: black
+}
+footer{
+	color: #CBC6C6;
+	background-color: none;
+	text-align: center;
+	line-height: 10%;
+	font-size: 10px;
+}
+
+
+.envolvente {
+	background-color: none;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+
+}
+.envolvente header{
+	grid-column: span 5;
+}
+
+.envolvente #Foto{
+
+}
+.envolvente #info{
+	grid-column: span 4;
+}
+
+.envolvente .jumbotron{
+	grid-column: 1/-1;
+}
+
+.envolvente footer{
+	grid-column: 1/-1;
+}
+
+@media screen and (max-width: 980px) {
+
+
+	.envolvente header .navbar a{
+	
+	font-size: 50px;
+}
+
+
+	.envolvente header .navbar button{
+	
+	border: 5px solid grey;
+	width: 20%;
+	height: 100px;
+	font-size: 25px;
+}
+	.envolvente header .navbar input{
+	
+	
+	font-size: 55px;
+}
+
+.envolvente #Foto{
+	grid-column: 1/-1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+.envolvente .FOTO{
+	width: 40%;
+	height: 80%;
+}
+.envolvente #info{
+	grid-column: 1/-1;
+}
+
+
+}

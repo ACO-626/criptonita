@@ -1,0 +1,178 @@
+
+.container-portada{
+	width: auto;
+	height: 400px;
+	background-color: black;
+	background-size: 140%;
+	animation: movimiento 100s;
+}
+
+@keyframes movimiento {
+	from{
+		    background-image: url(../img/laboratorio.png);
+			background-position:left; 
+		}to {
+			background-position: right;
+
+		}
+}
+#detalles h1{
+	position: relative;
+	padding-top:20px;
+	font-family: 'Iceland', cursive;
+}
+#detalles
+{
+	text-align: center;
+	color: white;
+	padding: 10px;
+}
+
+
+
+#detalles img{
+	width: 310px;
+	height: 180px;
+}
+#resume
+{
+	padding: 10px;
+	margin-top: 10px;
+	animation: negro 30s;
+	color: white;
+	text-align: center;
+	background-color: black;
+
+	width: auto;
+	margin: 0px auto;
+}
+.entre{
+	margin-left: 10px;
+}
+
+@keyframes negro{
+	from {
+		background-color: white;
+
+	}to {
+		
+		background-color: black;
+	}
+
+}
+
+.CONTACTAR{
+	color: white;
+	height: 60px;
+	width: 100px;
+	border: solid 3px;
+	border-color: white;
+	background-color: #CEB964;
+	padding: 5px;
+
+}
+
+.form{
+	position: relative;
+	left: 15%;
+	width: 80%;
+	height: 100%;
+	text-align: center;
+	
+
+}
+
+.conta{
+	background-image: url(../img/pai.jpg);
+}
+
+form div label{
+	font-size: 18px;
+	color: white;
+}
+
+.enviar{
+	border-color: white;
+	border-style: solid;
+	width: 200px;
+	margin: 0px auto;
+}
+
+footer{
+	
+	color: #CBC6C6;
+	width: 100%;
+	text-align: center;
+	line-height: 10%;
+	font-size: 10px;
+	
+
+}
+
+
+
+
+@media screen and (max-width: 980px) {
+	.envolvente .form {
+		grid-column: 1/-1;
+		left: 11%;
+		margin-bottom: 20%;
+		margin-top: 20%;
+		height: 100%;
+	}
+	.envolvente .mensaje{
+		grid-column: 1/-1;
+		margin-top: 30%;
+
+
+	}
+	.envolvente .mensaje h1{
+		font-size: 40px;
+
+	}
+	.envolvente header .navbar a{
+	
+	font-size: 50px;
+}
+.enviar{
+	border-color: black;
+	font-size: 40px;
+	border-style: solid;
+	width: 40%;
+	height: 10%;
+	background-color: white;
+	color: black;
+	margin: 100px auto;
+}
+form div label{
+	font-size: 30px;
+	color: white;
+}
+	.envolvente header .navbar button{
+	
+	border: 5px solid grey;
+	width: 20%;
+	height: 100px;
+	font-size: 25px;
+}
+	.envolvente header .navbar input{
+	
+	
+	font-size: 55px;
+}
+.envolvente .pie{
+	background: #7382D1;
+	grid-column: span 2;
+	font-size: 30px;
+	line-height: 100%;
+}
+
+.envolvente .form .form-group .form-control{
+	font-size: 30px;
+	color: black;
+}
+.conta{
+	background-image: url(../img/pai.jpg);
+	background-size: cover;
+}
+}
