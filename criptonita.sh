@@ -26,7 +26,7 @@ validarRuta()
 	DIR="FALSE"  #DIR  es True cuando sabemos que se trata de una carpeta
 
 	#Se imprimen las instrucciones para selección de ruta de archivo se puede navegar por los directorios
-	clear; #Limpiamos emulador de consola
+	#clear; #Limpiamos emulador de consola
 	echo "INGRESE LA RUTA, PUEDE APOYARSE EN LOS COMANDOS"
 	echo "Listar: list"
 	echo "Regresar: back"
@@ -271,7 +271,7 @@ do
 	echo -e "Seleccione la opción deseada:"
 	echo "1) Cifrado simétrico"
 	echo "2) Descifrado simétrico"
-	echo "3) Cifrado ásimétrico"
+	echo "3) Cifrado y descifrado asimétrico"
 	echo "4) Salir"
 
 	#Se lee la opción indicada por el usuario
@@ -308,6 +308,7 @@ do
 				if [ "$METODO" -ge 1 ] && [ "$METODO" -le 11 ]
 				then
 					#Se aplica la función cifrado
+					clear
 					cifrado 
 					#una vez salido de la función cifrado no puede haber recursividad a menos que se vuelva a entrar
 					#Esta asignación aquí asegura que no haya una recursividad no desada en caso de volver a cifrar
@@ -320,18 +321,144 @@ do
 			done
 			;;
 		"2") #Este es el caso en el que el usuario quiere descifrar simétricamente
-			descifrar && clear && echo "Descifrado completado" #Se llama a la función descifrar 
+			clear && descifrar && clear && echo "Descifrado completado" #Se llama a la función descifrar 
 			;;
-		"3") #Esta es la opción para algoritmos de cifrado asimétrico
-			echo -e "Generación de claves"
-			echo "Para cifrar asimétricamente, primero tenemos que crar tu par de claves: "
-			echo "ENTER/aceptar"
-			#Leemos un enter con:
-			read -s -n 1 key #No se permite la escritira, solo se lee un caracter separado con un espacio
+		"3") #Esta es la opción de algoritmos asimétricos
+			clear #Limpiamos la pantalla
 
-
-
-			;;
+			oAsimetric=""; # Declaramos oAsimetric que guarda la opción de menú del sig menú
+			until [ "$oAsimetric" == "8" ] #Salimos hasta que el usuario seleccione la opción 8
+			do
+				#Imprimimos el menú de opciones de cifrado asimétricos
+				echo -e "Indique una opcion:"
+				echo "1. Generar claves (Pública y privada) con gpg"
+				echo "2. Ver anillo de claves"
+				echo "3. Generar archivo de clave pública"
+				echo "4. Subir clave pública a un servidor de clave (MIT)"
+				echo "5. Importar clave desde archivo"
+				echo "6. Cifrar con clave pública"
+				echo "7. Descifrar con clave privada con gpg"
+				echo "8. Regresar"
+				read oAsimetric; #Leemos la opción de menú de opciones de asimétrico
+				if [ $oAsimetric = "1" ] #Se generan claves públicas y privadas
+				then #Se procede a realizar las claves públicas
+					clear #limpiamos para mejor visualización
+					gpg --full-generate-key #Nos permite elegir el método de cifrado para la generación de claves
+					#Se sube clave pública
+					echo -n "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+					read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+					clear
+				elif [ $oAsimetric = "2" ] #Se pueden visualizar la claves en el sistema
+				then
+					clear 
+					gpg -k #Se consulta el anillo de claves del usuario
+					echo -n "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+					read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+					clear
+				elif [ $oAsimetric = "3" ] #Se genera un archivo gpg con la clave pública
+				then 
+					clear && echo "Ingrese el directorio en donde generar su clave:"  #Se solicita la dirección
+					validarRuta #Se valida que lo ingresado por el usurio sea una ruta
+					if [ -d $RUTA ] && [ $ARCHIVO = TRUE  ] #En el caso de la ruta obtenida sea un directorio 
+					then  #Entonces solicitamos el ID del anillo de claves
+						IDCLAVE="" #Variable para almacenar el ID de la clave pública
+						echo "El ID de su clave se puede ver en los anillos de claves (opción 2)"
+						echo "Ingrese el ID de su clave:" #Pedimos la clave ID para identificar la clave pública
+						echo -n "KID: "
+						read IDCLAVE #Guardamos la clave
+						NAMEKEY="" #Variable que almacena el nombre del archivo de la llave
+						echo -n "Nombre del archivo (el que desee para su llave)":
+						read NAMEKEY; #Se lee el nombre del archivo de la llave
+						RUTAACTUAL="$(pwd)"  #Se guarda la ubicación actual
+						cd $RUTA #Nos movemos a donde queremos generar la clave
+						gpg --output $NAMEKEY.gpg --export $IDCLAVE && echo -e "Se ha creado el archivo con exito en $RUTA" #Se ejecuta comando para exportar la clave
+						cd $RUTAACTUAL #regresamos a directorio de inicio
+						echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+						read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+						clear
+						
+					else
+						echo "Error: Ruta inválida" #En el caso de que no exista tal directorio o ne se pueda acceder
+					fi
+				elif [ $oAsimetric = "4" ] #El caso en que deseamos subir la clave pública a un server
+				then
+					clear
+					IDCLAVE="" #Variable para almacenar el ID de la clave pública
+					echo "El ID de su clave se puede ver en el anillos de claves (opción 2)"
+					echo -n "Ingrese el ID de su clave: " #Pedimos la clave ID para identificar la clave pública
+					read IDCLAVE #Guardamos la clave
+					#Enviamos la clave y avisamos al usuario que su clave se ha subido exitosamente al servidor en caso de ser así
+					gpg --send-keys --keyserver pgp.mit.edu $IDCLAVE && echo -e "Su clave se ha cargado exitosamente al servidor de MIT"
+					echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+					read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+					clear
+				elif [ $oAsimetric = "5" ] #En el caso que importamos una clave
+				then
+					clear && echo "Ingrese la ruta del archivo a Importar:"
+					validarRuta #Se valida la ruta del archvi a importar
+					if [ -f $RUTA ] #Si existe dicho archivo
+					then
+						RUTAACTUAL="$(pwd)" #obtenemos la ruta actual para poder regresar cuando nos movamos a la carpeta contenedora
+						MADREDIR="$(dirname "$RUTA")" #Identificamos la carpeta contenedora del archivo
+						cd $MADREDIR #Nos movemos a la ubicación del archivo 
+						NOMBRECLAVE="$(basename $RUTA)" #Obtenemos el nombre del directorio a partir de la ruta absoluta
+						gpg --import $NOMBRECLAVE && echo -e "Importación exitosa"
+						cd $RUTAACTUAL #Regresamos a directorio original
+						echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+						read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+						clear 
+					fi
+				elif [ $oAsimetric = "6" ] #Caso en el que ciframos con llave pública
+				then
+					# Se solicita la ruta para cifrar
+					clear && echo "Ingrese la ruta del archivo a Cifrar"
+					validarRuta
+					if [ -f $RUTA ]
+					then
+						IDCLAVE="" #Variable para almacenar el ID de la clave pública
+						echo "El ID de su clave se puede ver en el anillos de claves (opción 2)"
+						echo "Ingrese el ID de su clave:" #Pedimos la clave ID para identificar la clave pública
+						echo -n "KID: "
+						read IDCLAVE #Guardamos la clave
+						RUTAACTUAL="$(pwd)" #obtenemos la ruta actual para poder regresar cuando nos movamos a la carpeta contenedora
+						MADREDIR="$(dirname "$RUTA")" #Identificamos la carpeta contenedora del archivo
+						cd $MADREDIR #Nos movemos a la ubicación del archivo 
+						NOMBREACHIVO="$(basename $RUTA)" #Obtenemos el nombre del directorio a partir de la ruta absoluta
+						gpg --no-symkey-cache --encrypt --recipient $IDCLAVE $NOMBREACHIVO  && echo -e "Cifrado exitoso" #Ciframos con la clave pública
+						cd $RUTAACTUAL #Regresamos a la ruta de origen
+						echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+						read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+						clear 
+					else #En el caso en que el archivo no exista en la ruta indicada
+						echo -n "Archivo llave no encotrado"
+						echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+						read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+						clear 
+					fi	
+				elif [ $oAsimetric = "7" ] #Para descifrado con llave privada
+				then
+					clear && echo "Ingrese la ruta del archivo a descifrar"
+					validarRuta
+					if [ -f $RUTA ] #Si existe el archivo a descifrar
+					then
+						RUTAACTUAL="$(pwd)" #obtenemos la ruta actual para poder regresar cuando nos movamos a la carpeta contenedora
+						MADREDIR="$(dirname "$RUTA")" #Identificamos la carpeta contenedora del archivo						
+						FILEOUT="$(basename "$RUTA" .gpg)"
+						cd $MADREDIR #Nos movemos a la ubicación del archivo 
+						NOMBREACHIVO="$(basename $RUTA)" #Obtenemos el nombre del directorio a partir de la ruta absoluta
+						gpg -d -o $FILEOUT $NOMBREACHIVO && echo -e "Se ha descifrado correctamente en $MADREDIR" #Desencriptar en madredir con el nombre del archivo
+						cd $RUTAACTUAL #Regresamos a carpeta original
+						echo "Presione Enter para continuar..."  #Se permite una pausa que termina con un enter
+						read -s -n 1 key #No se permite la escritira, se lee un caracter separado con un espacio
+						clear 
+					fi
+				elif [ $oAsimetric = "8" ]
+				then
+					clear;
+				fi
+			done
+			#Leemos un enter con:			
+		;;
 		"4")
 			clear
 			;;
@@ -340,11 +467,8 @@ do
 			;;
 		*)
 			echo "Opción inválida"
-
 			clear
 			echo "Para ver el manual de uso ingrese: man criptonita"			
 			;;
 	esac
 done
-
-
